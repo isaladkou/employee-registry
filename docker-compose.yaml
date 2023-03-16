@@ -1,0 +1,21 @@
+services:
+  employee_app:
+    image: employees_image
+    ports:
+      - 8080:8080
+  employee_postgres:
+    image: postgres
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - employees_volume:/usr/local/pgsql/data
+  employee_liquibase:
+    image: employee_liquibase
+    ports:
+      - 8081:8081
+volumes:
+  employees_volume:
+    driver: local

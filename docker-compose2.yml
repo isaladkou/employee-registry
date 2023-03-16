@@ -1,0 +1,29 @@
+services:
+  employee_app:
+    image: employees_image
+    ports:
+      - 8080:8080
+  employee_postgres:
+    image: postgres
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - employees_volume:/usr/local/pgsql/data
+  employee_liquibase:
+    image: employees_liquibase
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "start"
+        liquibase --url=jdbc:postgresql://employee_postgres:5432/postgres --username=postgres --password=postgres --changelog-file=changelog.sql update
+        liquibase --url=jdbc:postgresql://employee_postgres:5432/postgres --username=postgres --password=postgres --changelog-file=changelog2.sql update
+        echo "stop"
+    ports:
+      - 8081:8081
+volumes:
+  employees_volume:
+    driver: local
